@@ -48,11 +48,11 @@ function readFile() {
       return console.log(err);
     }
 
-    // Break the string down by comma and store output as variables to be passed later
-    var internalQuery = output[1];
-    //set the provided information to the variables to be used in other funcitons
-    userInput = liriAction;
-    userQuery = internalQuery;
+    output = data.split(",");
+
+    userInput = output[0];
+    userQuery = output[1];
+
     getAction();
   });
 }
@@ -172,8 +172,5 @@ function log() {
     if (err) {
       return console.log(err);
     }
-
-    // Otherwise, it will print: "movies.txt was updated!"
-    console.log("log.txt was updated!");
   });
 }
