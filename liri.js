@@ -5,10 +5,12 @@ var processInput = process.argv;
 var userQuery = "";
 var logInfo = "";
 
+//finds out the user input
 for (var i = 3; i < processInput.length; i++) {
   userQuery += processInput[i] + " ";
 }
 
+//gets the informaiton needed to connect to the correct data source
 var keys = require("./keys.js");
 var Twitter = require("twitter");
 var Spotify = require("node-spotify-api");
@@ -20,12 +22,15 @@ var spotify = new Spotify(keys.spotify);
 
 getAction();
 
+//trigger the action after user input
 function getAction() {
+  //if there is no input, then spotify-this or movie-this perdetermined song/movie
   if (userInput === "spotify-this-song" && userQuery === "") {
     userQuery = "The Sign Ace of Base";
   } else if (userInput === "movie-this" && userQuery === "") {
     userQuery = "Mr. Nobody";
   }
+  //triggers the appropriate function based on user input
   if (userInput === "spotify-this-song") {
     spotifyGo();
   } else if (userInput === "my-tweets") {
@@ -35,6 +40,7 @@ function getAction() {
   } else if (userInput === "do-what-it-says") {
     readFile();
   } else if (userInput === undefined) {
+    //handles unknown commands
     console.log(
       "Do you need a list of commands? Try entering 'my-tweets', 'spotify-this-song', 'movie-this', or 'do-what-it-says'. Or don't, you do you, fam."
     );
@@ -42,14 +48,16 @@ function getAction() {
 }
 
 function readFile() {
-  // Running the readFile module that's inside of fs.
+  // Running the readFile module that's inside of fs. this connects to random.txt
   fs.readFile("random.txt", "utf8", function(err, data) {
     if (err) {
       return console.log(err);
     }
 
+    //splits the data where there is a comma
     output = data.split(",");
 
+    //parses the data into two variables that can be then passed back to getAction()
     userInput = output[0];
     userQuery = output[1];
 
@@ -75,8 +83,8 @@ function twitterGo() {
         var tweetCreated = JSON.stringify(tweets[i].created_at);
         console.log("Your tweet on " + tweetCreated + " said, " + tweetText);
         console.log(" ");
-        logInfo = tweetCreated + ", " + tweetText;
-        log();
+        logInfo = tweetCreated + ", " + tweetText; //sets the information into a variable so it can be passed to the log() function
+        log(); //logs the output to log.txt
       }
     }
   });
@@ -105,8 +113,8 @@ function spotifyGo() {
     console.log("Check it out: " + previewURL);
     console.log(" ");
     console.log("Album: " + albumName);
-    logInfo = upperName + ", " + songName + "," + previewURL + ", " + albumName;
-    log();
+    logInfo = upperName + ", " + songName + "," + previewURL + ", " + albumName; //sets the info up to be passed to the log function
+    log(); //runs log function
   });
 }
 
@@ -145,6 +153,7 @@ function omdbGo() {
       console.log("Plot: " + JSON.parse(body).Plot);
       console.log(" ");
       console.log("Actors: " + JSON.parse(body).Actors);
+      //sets the information gatherd to be placed in the log.txt
       logInfo =
         JSON.parse(body).Title +
         ", " +
@@ -161,12 +170,13 @@ function omdbGo() {
         JSON.parse(body).Plot +
         ", " +
         JSON.parse(body).Actors;
-      log();
+      log(); //runs the log function
     }
   });
 }
 
 function log() {
+  //add logInfo to the log
   fs.appendFile("log.txt", logInfo, function(err) {
     // If the code experiences any errors it will log the error to the console.
     if (err) {
